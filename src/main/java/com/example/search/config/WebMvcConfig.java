@@ -1,6 +1,6 @@
 package com.example.search.config;
 
-import com.example.search.blog.BlogSearchRequestResolver;
+import com.example.search.util.BlogSearchRequestResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

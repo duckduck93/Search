@@ -4,11 +4,10 @@ import com.example.search.blog.Blog;
 import com.example.search.blog.client.BlogSearchClient;
 import com.example.search.blog.client.kakao.model.KakaoDocument;
 import com.example.search.blog.client.kakao.model.KakaoResponse;
-import com.example.search.util.SortType;
+import com.example.search.blog.exchange.BlogSearchRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,16 +24,16 @@ public class KakaoSearchClient implements BlogSearchClient {
     private static final String KAKAO_URL = "https://dapi.kakao.com/v2/search/blog";
 
     @Override
-    public Page<Blog> search(String keyword, SortType sort, Pageable pageable) {
-        KakaoResponse response = requestToKakao(keyword, sort, pageable);
+    public Page<Blog> search(BlogSearchRequest request) {
+        KakaoResponse response = requestToKakao(request);
         return new PageImpl<>(
                 response.getDocuments().stream().map(KakaoDocument::toBlog).toList(),
-                pageable,
+                request,
                 response.getMeta().getTotalCount()
         );
     }
 
-    public KakaoResponse requestToKakao(String keyword, SortType sort, Pageable pageable) {
+    public KakaoResponse requestToKakao(BlogSearchRequest request) {
         RestTemplate template = new RestTemplate();
 
         KakaoObjectMapper mapper = new KakaoObjectMapper();
@@ -45,10 +44,10 @@ public class KakaoSearchClient implements BlogSearchClient {
         template.getMessageConverters().add(converter);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(KAKAO_URL)
-                .queryParam("query", keyword)
-                .queryParam("sort", sort.toKakaoSort())
-                .queryParam("page", pageable.getPageNumber())
-                .queryParam("size", pageable.getPageSize());
+                .queryParam("query", request.getQuery())
+                .queryParam("sort", request.getSortType().toKakaoSort())
+                .queryParam("page", request.getPage())
+                .queryParam("size", request.getSize());
         URI uri = builder.build().encode().toUri();
 
         HttpHeaders headers = new HttpHeaders();
