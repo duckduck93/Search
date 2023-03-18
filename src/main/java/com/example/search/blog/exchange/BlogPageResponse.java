@@ -2,25 +2,21 @@ package com.example.search.blog.exchange;
 
 import com.example.search.blog.Blog;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 public class BlogPageResponse {
-    private Long total;
-    private Integer size;
-    private Integer page;
-    private List<BlogResponse> items;
+    private final Long total;
+    private final Integer size;
+    private final Integer page;
+    private final List<BlogResponse> items;
 
-    public static BlogPageResponse from(Page<Blog> arg) {
-        BlogPageResponse response = new BlogPageResponse();
-        response.total = arg.getTotalElements();
-        response.size = arg.getSize();
-        response.page = arg.getNumber();
-        response.items = arg.get().map(BlogResponse::from).toList();
-        return response;
+    public BlogPageResponse(Page<Blog> arg) {
+        this.total = arg.getTotalElements();
+        this.size = arg.getSize();
+        this.page = arg.getNumber();
+        this.items = arg.get().map(BlogResponse::new).toList();
     }
 }

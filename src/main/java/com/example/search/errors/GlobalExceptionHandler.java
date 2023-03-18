@@ -9,11 +9,8 @@ import org.springframework.web.client.HttpClientErrorException;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler({
-            RequiredParameterNotExistsException.class,
-            RequestParameterMaxValueException.class,
-    })
-    public ResponseEntity<GlobalErrorResponse> handleRequiredParameterNotExistsException(HttpClientErrorException exception) {
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseEntity<GlobalErrorResponse> handleBadRequestException(HttpClientErrorException.BadRequest exception) {
         log.error(exception.getClass().getName(), exception.getMessage());
         GlobalErrorResponse response = new GlobalErrorResponse(exception.getStatusCode(), exception.getMessage());
         return new ResponseEntity<>(response, response.getStatusCode());

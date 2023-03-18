@@ -1,9 +1,7 @@
 package com.example.search.blog;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,16 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DisplayName("Blog Controller Api 테스트")
-@TestMethodOrder(MethodOrderer.MethodName.class)
 class BlogControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     @DisplayName("01. Kakao Api 조회 (All Parameter)")
-    void _01_searchTest() throws Exception {
+    void _01_searchBlogTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blogs")
+                MockMvcRequestBuilders.get("/blog")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("query", "카카오뱅크")
@@ -48,27 +45,10 @@ class BlogControllerTests {
     }
 
     @Test
-    @DisplayName("02. Kakao Api 조회 (Required Paramter)")
-    void _02_searchTest() throws Exception {
+    @DisplayName("02. Kakao Api 조회 (query 미포함)")
+    void _02_searchBlogTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blogs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "카카오뱅크")
-        );
-        result.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page", is(1)))
-                .andExpect(jsonPath("$.size", is(10)))
-                .andExpect(jsonPath("$.total").exists())
-                .andExpect(jsonPath("$.items", hasSize(10)));
-    }
-
-    @Test
-    @DisplayName("03. Kakao Api 조회 (query 미포함)")
-    void _03_searchTest() throws Exception {
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blogs")
+                MockMvcRequestBuilders.get("/blog")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("page", "2")

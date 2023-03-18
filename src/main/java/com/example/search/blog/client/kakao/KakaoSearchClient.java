@@ -4,16 +4,11 @@ import com.example.search.blog.Blog;
 import com.example.search.blog.client.BlogSearchClient;
 import com.example.search.blog.client.kakao.model.KakaoDocument;
 import com.example.search.blog.client.kakao.model.KakaoResponse;
-import com.example.search.blog.exchange.BlogSearchRequest;
-import com.fasterxml.jackson.core.JsonParser;
+import com.example.search.util.SortType;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,45 +18,41 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Component
-@RequiredArgsConstructor
 public class KakaoSearchClient implements BlogSearchClient {
-    private final KakaoApiInfo apiInfo;
+    private static final String KAKAO_URL = "https://dapi.kakao.com/v2/search/blog";
 
     @Override
-    public Page<Blog> search(BlogSearchRequest request) {
-        KakaoResponse response = requestToKakao(request);
+    public Page<Blog> search(String keyword, SortType sort, Pageable pageable) {
+        KakaoResponse response = requestToKakao(keyword, sort, pageable);
         return new PageImpl<>(
                 response.getDocuments().stream().map(KakaoDocument::toBlog).toList(),
-                request,
+                pageable,
                 response.getMeta().getTotalCount()
         );
     }
 
-    public KakaoResponse requestToKakao(BlogSearchRequest request) {
+    public KakaoResponse requestToKakao(String keyword, SortType sort, Pageable pageable) {
         RestTemplate template = new RestTemplate();
 
-        ObjectMapper mapper = localDateTimeObjectMapper();
+        KakaoObjectMapper mapper = new KakaoObjectMapper();
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(mapper);
 
         template.getMessageConverters().add(converter);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiInfo.getUrl())
-                .queryParam("query", request.getQuery())
-                .queryParam("sort", request.getSortType().toKakaoSort())
-                .queryParam("page", request.getPage())
-                .queryParam("size", request.getSize());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(KAKAO_URL)
+                .queryParam("query", keyword)
+                .queryParam("sort", sort.toKakaoSort())
+                .queryParam("page", pageable.getPageNumber())
+                .queryParam("size", pageable.getPageSize());
         URI uri = builder.build().encode().toUri();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "KakaoAK %s".formatted(apiInfo.getKey()));
+        headers.add("Authorization", "KakaoAK ");
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = template.exchange(uri, HttpMethod.GET, entity, String.class);
@@ -75,20 +66,5 @@ public class KakaoSearchClient implements BlogSearchClient {
         }
 
         return kakaoResponse;
-    }
-
-    private ObjectMapper localDateTimeObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(LocalDateTime.class, new JsonDeserializer<>() {
-            @Override
-            public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                return LocalDateTime.parse(p.getValueAsString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            }
-        });
-
-        mapper.registerModule(module);
-        return mapper;
     }
 }
