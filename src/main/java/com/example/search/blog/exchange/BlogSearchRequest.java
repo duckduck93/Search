@@ -4,12 +4,10 @@ import com.example.search.util.SortType;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class BlogSearchRequest implements Pageable {
     @NotEmpty(message = "검색어를 입력해주세요.")

@@ -17,6 +17,6 @@ public class BlogPageResponse {
         this.total = arg.getTotalElements();
         this.size = arg.getSize();
         this.page = arg.getNumber();
-        this.items = arg.get().map(BlogResponse::new).toList();
+        this.items = arg.get().map(BlogResponse::from).toList();
     }
 }
