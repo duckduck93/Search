@@ -1,11 +1,10 @@
 package com.example.search.keyword;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class KeywordResponse {
     private final String name;
     private final Long count;

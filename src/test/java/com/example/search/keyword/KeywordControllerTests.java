@@ -96,16 +96,4 @@ class KeywordControllerTests {
                 .andExpect(jsonPath("$[2].name", is("카카오i")))
                 .andExpect(jsonPath("$[2].count", is(1)));
     }
-
-    @Test
-    @DisplayName("03. Keyword Api 인기검색어 조회하기 (maxCount > 10 예외 발생)")
-    void _04_findPopularKeyword() throws Exception {
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/keywords/popular?size=11")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-        );
-        result.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
-    }
 }

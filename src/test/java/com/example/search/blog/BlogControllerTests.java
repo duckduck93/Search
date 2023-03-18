@@ -28,7 +28,7 @@ class BlogControllerTests {
     @DisplayName("01. Kakao Api 조회 (All Parameter)")
     void _01_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blog")
+                MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("query", "카카오뱅크")
@@ -48,7 +48,7 @@ class BlogControllerTests {
     @DisplayName("02. Kakao Api 조회 (Required Paramter)")
     void _02_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blog")
+                MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("query", "카카오뱅크")
@@ -65,7 +65,7 @@ class BlogControllerTests {
     @DisplayName("03. Kakao Api 조회 (query 미포함)")
     void _03_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blog")
+                MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("page", "2")

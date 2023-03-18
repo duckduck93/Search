@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/blog")
+@RequestMapping(path = "/blogs")
 @RequiredArgsConstructor
 public class BlogController {
     private final BlogService service;

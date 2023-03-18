@@ -14,7 +14,6 @@ import java.util.List;
 public class KeywordService {
     private final KeywordRepository repository;
 
-    @Transactional(readOnly = true)
     public List<Keyword> findPopularKeywords(int size) {
         Pageable pageable = PageRequest.of(
                 0,
