@@ -16,9 +16,14 @@ public class BlogController {
     private final BlogService service;
 
     @GetMapping
-    @Cacheable(value = "blogs", key = "#request.query")
     public BlogPageResponse search(final BlogSearchRequest request) {
         Page<Blog> results = this.service.search(request);
-        return new BlogPageResponse(results);
+        return BlogPageResponse.from(results);
+    }
+
+    @GetMapping(path = "/cache")
+    @Cacheable(cacheManager = "RedisCacheManager", value = "blogs", key = "#request.query + '|' + #request.page + '|' + #request.size + '|' + #request.sortType")
+    public BlogPageResponse searchCache(final BlogSearchRequest request) {
+        return this.search(request);
     }
 }

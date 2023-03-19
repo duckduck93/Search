@@ -1,30 +1,29 @@
 package com.example.search.blog.exchange;
 
 import com.example.search.blog.Blog;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class BlogResponse {
-    private final String title;
-    private final String contents;
-    private final String url;
-    private final String blogName;
-    private final String thumbnail;
-    private final LocalDateTime createAt;
+    private String title;
+    private String contents;
+    private String url;
+    private String blogName;
+    private String thumbnail;
+    private LocalDateTime createAt;
 
     public static BlogResponse from(Blog blog) {
-        return new BlogResponse(
-                blog.getTitle(),
-                blog.getContents(),
-                blog.getUrl(),
-                blog.getBlogName(),
-                blog.getThumbnail(),
-                blog.getCreateAt()
-        );
+        BlogResponse response = new BlogResponse();
+        response.title = blog.getTitle();
+        response.contents = blog.getContents();
+        response.url = blog.getUrl();
+        response.blogName = blog.getBlogName();
+        response.thumbnail = blog.getThumbnail();
+        response.createAt = blog.getCreateAt();
+        return response;
     }
 }

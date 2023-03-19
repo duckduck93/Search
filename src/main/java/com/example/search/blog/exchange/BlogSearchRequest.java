@@ -1,6 +1,5 @@
 package com.example.search.blog.exchange;
 
-import com.example.search.util.SortType;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

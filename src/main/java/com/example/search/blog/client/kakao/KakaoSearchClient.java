@@ -5,7 +5,12 @@ import com.example.search.blog.client.BlogSearchClient;
 import com.example.search.blog.client.kakao.model.KakaoDocument;
 import com.example.search.blog.client.kakao.model.KakaoResponse;
 import com.example.search.blog.exchange.BlogSearchRequest;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,7 +23,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +46,7 @@ public class KakaoSearchClient implements BlogSearchClient {
     public KakaoResponse requestToKakao(BlogSearchRequest request) {
         RestTemplate template = new RestTemplate();
 
-        KakaoObjectMapper mapper = new KakaoObjectMapper();
+        ObjectMapper mapper = localDateTimeObjectMapper();
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(mapper);
@@ -67,5 +75,20 @@ public class KakaoSearchClient implements BlogSearchClient {
         }
 
         return kakaoResponse;
+    }
+
+    private ObjectMapper localDateTimeObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(LocalDateTime.class, new JsonDeserializer<>() {
+            @Override
+            public LocalDateTime deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+                return LocalDateTime.parse(p.getValueAsString(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+            }
+        });
+
+        mapper.registerModule(module);
+        return mapper;
     }
 }

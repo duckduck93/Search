@@ -2,7 +2,7 @@ package com.example.search.blog;
 
 import com.example.search.blog.client.BlogSearchClient;
 import com.example.search.blog.exchange.BlogSearchRequest;
-import com.example.search.util.SortType;
+import com.example.search.blog.exchange.SortType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -44,50 +44,53 @@ class BlogControllerCacheTests {
 
     @Test
     @DisplayName("01. Caching 검증")
-    void _01_searchTest() throws Exception {
-        BlogSearchRequest before = new BlogSearchRequest("before", 0, 1, SortType.ACCURACY);
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
-
-        ResultActions result1 = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blogs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "title1")
-        );
-        result1.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page", is(before.getPage())))
-                .andExpect(jsonPath("$.size", is(before.getSize())))
-                .andExpect(jsonPath("$.total", is(1)))
-                .andExpect(jsonPath("$.items[0].title", is(before.getQuery())));
-
-        BlogSearchRequest after = new BlogSearchRequest("after", 0, 1, SortType.ACCURACY);
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(after));
-
-        ResultActions result2 = mockMvc.perform(
-                MockMvcRequestBuilders.get("/blogs")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "title1")
-        );
-        result2.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page", is(before.getPage())))
-                .andExpect(jsonPath("$.size", is(before.getSize())))
-                .andExpect(jsonPath("$.total", is(1)))
-                .andExpect(jsonPath("$.items[0].title", is(before.getQuery()))); // before 일치한다면 caching 성공
+    void _01_searchCacheTest() throws Exception {
+        // 캐싱 적용
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query1"));
+        searchCacheRequestAndCheckResponse("query1", "query1");
+        // 캐싱 사용
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query1-after"));
+        searchCacheRequestAndCheckResponse("query1", "query1");
     }
 
-    private Page<Blog> createTemporaryData(BlogSearchRequest request) {
+    @Test
+    @DisplayName("02. TTL 적용 검증")
+    void _02_searchCacheTest() throws Exception {
+        // 캐싱 적용
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query2"));
+        searchCacheRequestAndCheckResponse("query2", "query2");
+        // 캐싱 만료
+        Thread.sleep(10 * 1000);
+        // 캐싱 적용
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query2-after"));
+        searchCacheRequestAndCheckResponse("query2-after", "query2-after");
+    }
+
+    private void searchCacheRequestAndCheckResponse(String query, String expect) throws Exception {
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get("/blogs/cache")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .queryParam("query", query)
+        );
+        result.andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page", is(0)))
+                .andExpect(jsonPath("$.size", is(0)))
+                .andExpect(jsonPath("$.total", is(1)))
+                .andExpect(jsonPath("$.items[0].title", is(expect)));
+    }
+
+    private Page<Blog> createTemporaryData(String response) {
         List<Blog> items = new ArrayList<>();
         items.add(new Blog(
-                request.getQuery(),
-                request.getQuery(),
-                request.getQuery(),
-                request.getQuery(),
-                request.getQuery(),
+                response,
+                response,
+                response,
+                response,
+                response,
                 LocalDateTime.now()
         ));
-        return new PageImpl<>(items, request, 1);
+        return new PageImpl<>(items, new BlogSearchRequest(response, 0, 0, SortType.ACCURACY), 1);
     }
 }

@@ -8,6 +8,15 @@ spring:
     ansi:
       enabled: always
 
+  cache:
+    type: redis
+
+  redis:
+    host: localhost
+    port: 6371
+    database: 0
+    ttl-second: 10
+  
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
