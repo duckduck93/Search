@@ -16,6 +16,12 @@ spring:
     port: 6371
     database: 0
     ttl-second: 10
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   
   jpa:
     open-in-view: false
@@ -38,12 +44,9 @@ spring:
 blog:
   kakao:
     url: https://dapi.kakao.com/v2/search/blog
-    key:
-      -
+    key: x
 
   naver:
     url: https://openapi.naver.com/v1/search/blog.json
-    id:
-      -
-    secret:
-      -
+    id: x
+    secret: x

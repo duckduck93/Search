@@ -4,9 +4,9 @@ import com.example.search.blog.client.kakao.KakaoSearchClient;
 import com.example.search.blog.client.naver.NaverSearchClient;
 import com.example.search.blog.exchange.BlogSearchRequest;
 import com.example.search.errors.blogs.AllApiServerErrorException;
-import com.example.search.keyword.KeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -14,13 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BlogService {
-    private final KeywordService keywordService;
+    private final RabbitTemplate rabbitTemplate;
 
     private final KakaoSearchClient kakaoClient;
     private final NaverSearchClient naverClient;
 
     public Page<Blog> search(final BlogSearchRequest request) {
-        this.keywordService.increaseCount(request.getQuery());
+        this.rabbitTemplate.convertAndSend("search.exchange", "search.routing.#", request.getQuery());
+
         try {
             return kakaoClient.search(request);
         } catch (Exception e) {

@@ -6,8 +6,6 @@ import com.example.search.blog.exchange.BlogSearchRequest;
 import com.example.search.errors.blogs.AllApiServerErrorException;
 import com.example.search.errors.blogs.KakaoApiServerErrorException;
 import com.example.search.errors.blogs.NaverApiServerErrorException;
-import com.example.search.keyword.Keyword;
-import com.example.search.keyword.KeywordService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +13,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Description;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +30,7 @@ class BlogServiceTests {
     private BlogService service;
 
     @Mock
-    private KeywordService keywordService;
+    private RabbitTemplate rabbitTemplate;
     @Mock
     private KakaoSearchClient kakaoClient;
     @Mock
@@ -40,7 +39,6 @@ class BlogServiceTests {
     @Test
     @Description("01. Kakao Api 장애 시 Naver Api 호출 테스트")
     void _01_search() {
-        given(keywordService.increaseCount(ArgumentMatchers.any())).willReturn(new Keyword("keyword", 1L));
         given(kakaoClient.search(ArgumentMatchers.any())).willThrow(new KakaoApiServerErrorException());
         given(naverClient.search(ArgumentMatchers.any())).willReturn(createMockResult());
 
@@ -56,7 +54,6 @@ class BlogServiceTests {
     @Test
     @Description("02. Kakao Api, Naver Api 전체 장애")
     void _02_search() {
-        given(keywordService.increaseCount(ArgumentMatchers.any())).willReturn(new Keyword("keyword", 1L));
         given(kakaoClient.search(ArgumentMatchers.any())).willThrow(new KakaoApiServerErrorException());
         given(naverClient.search(ArgumentMatchers.any())).willThrow(new NaverApiServerErrorException());
 
