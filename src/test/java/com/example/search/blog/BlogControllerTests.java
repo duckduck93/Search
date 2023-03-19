@@ -34,7 +34,7 @@ class BlogControllerTests {
                 MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "카카오뱅크")
+                        .queryParam("query", "blog1")
                         .queryParam("page", "2")
                         .queryParam("size", "5")
                         .queryParam("sort", "ACCURACY")
@@ -54,7 +54,7 @@ class BlogControllerTests {
                 MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "카카오뱅크")
+                        .queryParam("query", "blog2")
         );
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())

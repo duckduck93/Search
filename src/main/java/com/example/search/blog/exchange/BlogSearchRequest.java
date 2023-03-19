@@ -16,6 +16,10 @@ public class BlogSearchRequest implements Pageable {
     private Integer size;
     private SortType sortType;
 
+    public BlogSearchRequest(String query) {
+        this(query, null, null, null);
+    }
+
     @Override
     public Sort getSort() {
         return Sort.unsorted();

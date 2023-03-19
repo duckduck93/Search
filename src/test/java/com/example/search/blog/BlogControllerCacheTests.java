@@ -1,6 +1,6 @@
 package com.example.search.blog;
 
-import com.example.search.blog.client.BlogSearchClient;
+import com.example.search.blog.client.kakao.KakaoSearchClient;
 import com.example.search.blog.exchange.BlogSearchRequest;
 import com.example.search.blog.exchange.SortType;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
@@ -36,35 +35,57 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class BlogControllerCacheTests {
     @Autowired
-    CacheManager cacheManager;
-    @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private BlogSearchClient client;
+    private KakaoSearchClient client;
 
     @Test
     @DisplayName("01. Caching 검증")
     void _01_searchCacheTest() throws Exception {
         // 캐싱 적용
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query1"));
-        searchCacheRequestAndCheckResponse("query1", "query1");
+        String before = "query1";
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+        searchCacheRequestAndCheckResponse(before, before);
         // 캐싱 사용
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query1-after"));
-        searchCacheRequestAndCheckResponse("query1", "query1");
+        String after = "query1-after";
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(after));
+        searchCacheRequestAndCheckResponse(before, before);
     }
 
     @Test
     @DisplayName("02. TTL 적용 검증")
     void _02_searchCacheTest() throws Exception {
         // 캐싱 적용
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query2"));
-        searchCacheRequestAndCheckResponse("query2", "query2");
+        String before = "query2";
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+        searchCacheRequestAndCheckResponse(before, before);
         // 캐싱 만료
         Thread.sleep(10 * 1000);
         // 캐싱 적용
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData("query2-after"));
-        searchCacheRequestAndCheckResponse("query2-after", "query2-after");
+        String after = "query2-after";
+        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(after));
+        searchCacheRequestAndCheckResponse(after, after);
     }
+
+//    @Test
+//    @DisplayName("03. Caching Keyword Count effect")
+//    void _03_searchCacheTest() throws Exception {
+//        // 캐싱 적용
+//        String before = "query3";
+//        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+//        searchCacheRequestAndCheckResponse(before, before);
+//        searchCacheRequestAndCheckResponse(before, before);
+//
+//        ResultActions result = mockMvc.perform(
+//                MockMvcRequestBuilders.get("/keywords/popular")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//        );
+//        result.andDo(MockMvcResultHandlers.print())
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$[0].name", is("query3")))
+//                .andExpect(jsonPath("$[0].count", is("2")));
+//    }
 
     private void searchCacheRequestAndCheckResponse(String query, String expect) throws Exception {
         ResultActions result = mockMvc.perform(

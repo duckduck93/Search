@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class KakaoMeta {
     @JsonProperty("total_count")
-    private int totalCount;
+    private long totalCount;
     @JsonProperty("pageable_count")
     private int pageableCount;
     @JsonProperty("is_end")

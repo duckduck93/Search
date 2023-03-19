@@ -16,4 +16,11 @@ public enum SortType {
         }
         return "accuracy";
     }
+
+    public String toNaverSort() {
+        if (this == SortType.RECENCY) {
+            return "date";
+        }
+        return "sim";
+    }
 }

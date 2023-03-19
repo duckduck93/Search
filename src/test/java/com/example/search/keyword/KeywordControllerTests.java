@@ -34,7 +34,8 @@ class KeywordControllerTests {
                 "카카오i", "카카오M", "카카오벤처스", "카카오X", "카카오뱅크",
                 "하하하",
 
-                "카카오뱅크", "카카오뱅크", "카카오",
+                "카카오뱅크", "카카오뱅크", "카카오뱅크", "카카오뱅크",
+                "카카오", "카카오", "카카오",
         };
         for (String keyword : keywords) {
             ResultActions result = mockMvc.perform(
@@ -63,9 +64,9 @@ class KeywordControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(10)))
                 .andExpect(jsonPath("$[0].name", is("카카오뱅크")))
-                .andExpect(jsonPath("$[0].count", is(3)))
+                .andExpect(jsonPath("$[0].count", is(5)))
                 .andExpect(jsonPath("$[1].name", is("카카오")))
-                .andExpect(jsonPath("$[1].count", is(2)))
+                .andExpect(jsonPath("$[1].count", is(4)))
                 .andExpect(jsonPath("$[2].name", is("카카오i")))
                 .andExpect(jsonPath("$[2].count", is(1)))
                 .andExpect(jsonPath("$[3].name", is("카카오M")))
@@ -90,9 +91,9 @@ class KeywordControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].name", is("카카오뱅크")))
-                .andExpect(jsonPath("$[0].count", is(3)))
+                .andExpect(jsonPath("$[0].count", is(5)))
                 .andExpect(jsonPath("$[1].name", is("카카오")))
-                .andExpect(jsonPath("$[1].count", is(2)))
+                .andExpect(jsonPath("$[1].count", is(4)))
                 .andExpect(jsonPath("$[2].name", is("카카오i")))
                 .andExpect(jsonPath("$[2].count", is(1)));
     }

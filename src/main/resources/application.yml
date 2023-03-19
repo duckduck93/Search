@@ -35,6 +35,15 @@ spring:
     username: sa
     password:
 
-kakao:
-  url: https://dapi.kakao.com/v2/search/blog
-  key: -
+blog:
+  kakao:
+    url: https://dapi.kakao.com/v2/search/blog
+    key:
+      -
+
+  naver:
+    url: https://openapi.naver.com/v1/search/blog.json
+    id:
+      -
+    secret:
+      -
