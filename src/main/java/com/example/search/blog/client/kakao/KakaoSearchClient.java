@@ -6,6 +6,7 @@ import com.example.search.blog.client.kakao.model.KakaoDocument;
 import com.example.search.blog.client.kakao.model.KakaoResponse;
 import com.example.search.blog.exchange.BlogSearchRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpEntity;
@@ -20,8 +21,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @Component
+@RequiredArgsConstructor
 public class KakaoSearchClient implements BlogSearchClient {
-    private static final String KAKAO_URL = "https://dapi.kakao.com/v2/search/blog";
+    private final KakaoApiInfo apiInfo;
 
     @Override
     public Page<Blog> search(BlogSearchRequest request) {
@@ -43,7 +45,7 @@ public class KakaoSearchClient implements BlogSearchClient {
 
         template.getMessageConverters().add(converter);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(KAKAO_URL)
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiInfo.getUrl())
                 .queryParam("query", request.getQuery())
                 .queryParam("sort", request.getSortType().toKakaoSort())
                 .queryParam("page", request.getPage())
@@ -51,7 +53,7 @@ public class KakaoSearchClient implements BlogSearchClient {
         URI uri = builder.build().encode().toUri();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "KakaoAK ");
+        headers.add("Authorization", "KakaoAK %s".formatted(apiInfo.getKey()));
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = template.exchange(uri, HttpMethod.GET, entity, String.class);

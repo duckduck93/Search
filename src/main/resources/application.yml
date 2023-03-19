@@ -25,3 +25,7 @@ spring:
     url: "jdbc:h2:mem:search;MODE=MYSQL;DB_CLOSE_DELAY=-1"
     username: sa
     password:
+
+kakao:
+  url: https://dapi.kakao.com/v2/search/blog
+  key: -

@@ -8,8 +8,6 @@ import lombok.Setter;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.Optional;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -23,7 +21,7 @@ public class BlogSearchRequest implements Pageable {
 
     @Override
     public Sort getSort() {
-        return Sort.by("");
+        return Sort.unsorted();
     }
 
     @Override
@@ -64,25 +62,5 @@ public class BlogSearchRequest implements Pageable {
     @Override
     public boolean hasPrevious() {
         return false;
-    }
-
-    @Override
-    public boolean isPaged() {
-        return Pageable.super.isPaged();
-    }
-
-    @Override
-    public boolean isUnpaged() {
-        return Pageable.super.isUnpaged();
-    }
-
-    @Override
-    public Sort getSortOr(Sort sort) {
-        return Pageable.super.getSortOr(sort);
-    }
-
-    @Override
-    public Optional<Pageable> toOptional() {
-        return Pageable.super.toOptional();
     }
 }
