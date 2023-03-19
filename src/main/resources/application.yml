@@ -1,6 +1,6 @@
 spring:
   application:
-    name: searhc
+    name: search
   sql:
     init:
       mode: always
@@ -11,18 +11,6 @@ spring:
   cache:
     type: redis
 
-  redis:
-    host: localhost
-    port: 6371
-    database: 0
-    ttl-second: 10
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-  
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
@@ -33,7 +21,6 @@ spring:
     hibernate:
       ddl-auto: create
     generate-ddl: true
-    show-sql: true
   datasource:
     platform: h2
     driver-class-name: org.h2.Driver
@@ -50,3 +37,33 @@ blog:
     url: https://openapi.naver.com/v1/search/blog.json
     id: x
     secret: x
+
+---
+spring:
+  config.activate.on-profile: local
+  jpa.show-sql: true
+  redis:
+    host: localhost
+    port: 6371
+    database: 0
+    ttl-second: 10
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+---
+spring:
+  config.activate.on-profile: development
+  jpa.show-sql: false
+  redis:
+    host: search-cache
+    port: 6371
+    database: 0
+    ttl-second: 10
+  rabbitmq:
+    host: search-queue
+    port: 5672
+    username: guest
+    password: guest
