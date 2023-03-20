@@ -1,67 +1,40 @@
 package com.example.search.blog.exchange;
 
-import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
 
-@Getter
-@AllArgsConstructor
-public class BlogSearchRequest implements Pageable {
-    @NotEmpty(message = "검색어를 입력해주세요.")
-    private String query;
+import java.util.Optional;
 
-    private Integer page;
-    private Integer size;
-    private SortType sortType;
+@RequiredArgsConstructor
+public class BlogSearchRequest {
+    @NotBlank(message = "query: 검색어를 입력해주세요")
+    private final String query;
 
-    public BlogSearchRequest(String query) {
-        this(query, null, null, null);
+    private final SortType sortType;
+
+    @Min(value = 1, message = "page: 1 이상이여야 합니다")
+    @Max(value = 50, message = "page: 50 이하여야 합니다")
+    private final Integer page;
+
+    @Min(value = 1, message = "size: 1 이상이여야 합니다")
+    @Max(value = 50, message = "size: 50 이하여야 합니다")
+    private final Integer size;
+
+    public String getQuery() {
+        return query;
     }
 
-    @Override
-    public Sort getSort() {
-        return Sort.unsorted();
+    public SortType getSortType() {
+        return Optional.ofNullable(sortType).orElse(SortType.ACCURACY);
     }
 
-    @Override
-    public int getPageNumber() {
-        return this.page;
+    public int getPage() {
+        return Optional.ofNullable(page).orElse(1);
     }
 
-    @Override
-    public int getPageSize() {
-        return this.size;
-    }
-
-    @Override
-    public long getOffset() {
-        return (long) page * (long) size;
-    }
-
-    @Override
-    public Pageable next() {
-        return null;
-    }
-
-    @Override
-    public Pageable previousOrFirst() {
-        return null;
-    }
-
-    @Override
-    public Pageable first() {
-        return null;
-    }
-
-    @Override
-    public Pageable withPage(int pageNumber) {
-        return null;
-    }
-
-    @Override
-    public boolean hasPrevious() {
-        return false;
+    public int getSize() {
+        return Optional.ofNullable(size).orElse(10);
     }
 }

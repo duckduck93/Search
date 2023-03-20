@@ -28,7 +28,7 @@ class BlogControllerTests {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("01. Kakao Api 조회 (All Parameter)")
+    @DisplayName("01. Api 조회 (All Parameter)")
     void _01_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get("/blogs")
@@ -48,7 +48,7 @@ class BlogControllerTests {
     }
 
     @Test
-    @DisplayName("02. Kakao Api 조회 (Required Paramter)")
+    @DisplayName("02. Api 조회 (Required Parameter)")
     void _02_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get("/blogs")
@@ -65,17 +65,18 @@ class BlogControllerTests {
     }
 
     @Test
-    @DisplayName("03. Kakao Api 조회 (query 미포함)")
+    @DisplayName("03. Api 조회 (Validation)")
     void _03_searchTest() throws Exception {
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("page", "2")
-                        .queryParam("size", "5")
-                        .queryParam("sort", "ACCURACY")
+                        .queryParam("page", "0")
+                        .queryParam("size", "51")
+                        .queryParam("sort", "없는 값")
         );
         result.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", is("page: 1 이상이여야 합니다, query: 검색어를 입력해주세요, size: 50 이하여야 합니다, sort: ACCURACY, ")));
     }
 }

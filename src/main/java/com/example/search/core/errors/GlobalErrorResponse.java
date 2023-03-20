@@ -1,15 +1,15 @@
-package com.example.search.errors;
+package com.example.search.core.errors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatusCode;
 
+import java.time.LocalDateTime;
+
 @Getter
+@AllArgsConstructor
 public class GlobalErrorResponse {
     private final HttpStatusCode statusCode;
     private final String message;
-
-    public GlobalErrorResponse(HttpStatusCode statusCode, String message) {
-        this.statusCode = statusCode;
-        this.message = message;
-    }
+    private final LocalDateTime time;
 }

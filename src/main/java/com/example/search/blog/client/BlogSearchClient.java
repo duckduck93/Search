@@ -1,6 +1,8 @@
 package com.example.search.blog.client;
 
 import com.example.search.blog.Blog;
+import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
+import com.example.search.blog.client.error.ApiServerErrorException;
 import com.example.search.blog.exchange.SortType;
 import org.springframework.data.domain.Page;
 

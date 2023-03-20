@@ -1,4 +1,4 @@
-package com.example.search.keyword.subscriber;
+package com.example.search.keyword.message;
 
 import com.example.search.keyword.KeywordService;
 import lombok.RequiredArgsConstructor;

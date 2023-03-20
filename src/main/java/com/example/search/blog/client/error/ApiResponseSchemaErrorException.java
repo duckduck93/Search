@@ -1,4 +1,4 @@
-package com.example.search.blog.client;
+package com.example.search.blog.client.error;
 
 public class ApiResponseSchemaErrorException extends RuntimeException {
     public ApiResponseSchemaErrorException(String clientName, Throwable cause) {

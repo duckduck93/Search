@@ -1,4 +1,4 @@
-package com.example.search.errors.blogs;
+package com.example.search.blog.client.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpServerErrorException;

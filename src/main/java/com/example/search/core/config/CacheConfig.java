@@ -1,4 +1,4 @@
-package com.example.search.config;
+package com.example.search.core.config;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;

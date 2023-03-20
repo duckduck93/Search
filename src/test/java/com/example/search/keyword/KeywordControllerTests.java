@@ -83,9 +83,10 @@ class KeywordControllerTests {
     @DisplayName("03. Keyword Api 인기검색어 조회하기 (maxCount 3)")
     void _03_findPopularKeyword() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/keywords/popular?size=3")
+                MockMvcRequestBuilders.get("/keywords/popular")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .queryParam("size", "3")
         );
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -102,11 +103,13 @@ class KeywordControllerTests {
     @DisplayName("03. Keyword Api 인기검색어 조회하기 (maxCount > 10 예외 발생)")
     void _04_findPopularKeyword() throws Exception {
         ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders.get("/keywords/popular?size=11")
+                MockMvcRequestBuilders.get("/keywords/popular")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
+                        .queryParam("size", "11")
         );
         result.andDo(MockMvcResultHandlers.print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message", is("size: 10 이하여야 합니다")));
     }
 }

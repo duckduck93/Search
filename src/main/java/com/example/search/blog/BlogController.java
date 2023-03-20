@@ -2,6 +2,7 @@ package com.example.search.blog;
 
 import com.example.search.blog.exchange.BlogPageResponse;
 import com.example.search.blog.exchange.BlogSearchRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,8 @@ public class BlogController {
     private final BlogService service;
 
     @GetMapping
-    public BlogPageResponse search(final BlogSearchRequest request) {
-        Page<Blog> results = this.service.search(request.getQuery(), request.getSortType(), request.getPageNumber(), request.getPageSize());
+    public BlogPageResponse search(@Valid final BlogSearchRequest request) {
+        Page<Blog> results = this.service.search(request.getQuery(), request.getSortType(), request.getPage(), request.getSize());
         return BlogPageResponse.from(results);
     }
 

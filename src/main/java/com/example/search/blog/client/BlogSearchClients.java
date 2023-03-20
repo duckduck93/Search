@@ -1,8 +1,10 @@
 package com.example.search.blog.client;
 
 import com.example.search.blog.Blog;
+import com.example.search.blog.client.error.AllApiServerErrorException;
+import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
+import com.example.search.blog.client.error.ApiServerErrorException;
 import com.example.search.blog.exchange.SortType;
-import com.example.search.errors.blogs.AllApiServerErrorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +27,7 @@ public class BlogSearchClients {
      * @param size    조회건수
      * @return 블로그 Api 조회 결과
      */
-    public Page<Blog> search(String keyword, SortType sort, int page, int size) {
+    public Page<Blog> search(String keyword, SortType sort, int page, int size) throws AllApiServerErrorException {
         for (BlogSearchClient client : clients) {
             try {
                 return client.search(keyword, sort, page, size);

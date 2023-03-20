@@ -1,10 +1,10 @@
 package com.example.search.blog;
 
-import com.example.search.blog.client.ApiServerErrorException;
 import com.example.search.blog.client.BlogSearchClient;
 import com.example.search.blog.client.BlogSearchClients;
+import com.example.search.blog.client.error.AllApiServerErrorException;
+import com.example.search.blog.client.error.ApiServerErrorException;
 import com.example.search.blog.exchange.SortType;
-import com.example.search.errors.blogs.AllApiServerErrorException;
 import com.example.search.keyword.message.KeywordCountPublisher;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import java.util.List;
 class BlogServiceTests {
 
     @Test
-    @Description("01. Kakao Api 장애 시 Naver Api 호출 테스트")
+    @Description("01. 1번 Api 장애 시 2번 Api 동작")
     void _01_search() {
         KeywordCountPublisher publisher = createKeywordCountPublisher();
         BlogSearchClients clients = new BlogSearchClients(
@@ -37,7 +37,7 @@ class BlogServiceTests {
     }
 
     @Test
-    @Description("02. Kakao Api, Naver Api 전체 장애")
+    @Description("02. 전체 Api 장애")
     void _02_search() {
         KeywordCountPublisher publisher = createKeywordCountPublisher();
         BlogSearchClients clients = new BlogSearchClients(

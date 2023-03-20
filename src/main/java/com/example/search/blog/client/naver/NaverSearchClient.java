@@ -1,9 +1,10 @@
 package com.example.search.blog.client.naver;
 
 import com.example.search.blog.Blog;
-import com.example.search.blog.client.ApiResponseSchemaErrorException;
-import com.example.search.blog.client.ApiServerErrorException;
 import com.example.search.blog.client.BlogSearchClient;
+import com.example.search.blog.client.error.ApiRequestSchemaErrorException;
+import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
+import com.example.search.blog.client.error.ApiServerErrorException;
 import com.example.search.blog.client.naver.model.NaverItem;
 import com.example.search.blog.client.naver.model.NaverResponse;
 import com.example.search.blog.exchange.SortType;
@@ -18,8 +19,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -32,6 +38,8 @@ import java.util.List;
 @Component
 @Order(2) // BlogSearchClient 중 두번째 구현체
 public class NaverSearchClient implements BlogSearchClient {
+    private static final String NAME = "Naver";
+
     private final String url;
     private final String id;
     private final String secret;
@@ -78,10 +86,13 @@ public class NaverSearchClient implements BlogSearchClient {
         headers.add("X-Naver-Client-Secret", secret);
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = template.exchange(uri, HttpMethod.GET, entity, String.class);
-        HttpStatusCode status = response.getStatusCode();
-        if (status.is5xxServerError()) {
-            throw new ApiServerErrorException("Naver");
+        ResponseEntity<String> response;
+        try {
+            response = template.exchange(uri, HttpMethod.GET, entity, String.class);
+        } catch (HttpServerErrorException e) {
+            throw new ApiServerErrorException(NAME);
+        } catch (HttpClientErrorException e) {
+            throw new ApiRequestSchemaErrorException(NAME);
         }
         String result = response.getBody();
 
@@ -89,7 +100,7 @@ public class NaverSearchClient implements BlogSearchClient {
         try {
             naverResponse = mapper.readValue(result, NaverResponse.class);
         } catch (JsonProcessingException e) {
-            throw new ApiResponseSchemaErrorException("Naver", e);
+            throw new ApiResponseSchemaErrorException(NAME, e);
         }
         return naverResponse;
     }

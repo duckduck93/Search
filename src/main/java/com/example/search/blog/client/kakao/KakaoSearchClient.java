@@ -1,9 +1,10 @@
 package com.example.search.blog.client.kakao;
 
 import com.example.search.blog.Blog;
-import com.example.search.blog.client.ApiResponseSchemaErrorException;
-import com.example.search.blog.client.ApiServerErrorException;
 import com.example.search.blog.client.BlogSearchClient;
+import com.example.search.blog.client.error.ApiRequestSchemaErrorException;
+import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
+import com.example.search.blog.client.error.ApiServerErrorException;
 import com.example.search.blog.client.kakao.model.KakaoDocument;
 import com.example.search.blog.client.kakao.model.KakaoResponse;
 import com.example.search.blog.exchange.SortType;
@@ -18,8 +19,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -32,6 +38,8 @@ import java.util.List;
 @Component
 @Order(1) // BlogSearchClient 중 첫번째 구현체
 public class KakaoSearchClient implements BlogSearchClient {
+    private static final String NAME = "Kakao";
+
     private final String url;
     private final String key;
     private final ObjectMapper mapper;
@@ -76,10 +84,13 @@ public class KakaoSearchClient implements BlogSearchClient {
         headers.add("Authorization", "KakaoAK %s".formatted(key));
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = template.exchange(uri, HttpMethod.GET, entity, String.class);
-        HttpStatusCode status = response.getStatusCode();
-        if (status.is5xxServerError()) {
-            throw new ApiServerErrorException("Kakao");
+        ResponseEntity<String> response;
+        try {
+            response = template.exchange(uri, HttpMethod.GET, entity, String.class);
+        } catch (HttpServerErrorException e) {
+            throw new ApiServerErrorException(NAME);
+        } catch (HttpClientErrorException e) {
+            throw new ApiRequestSchemaErrorException(NAME);
         }
         String result = response.getBody();
 
@@ -87,7 +98,7 @@ public class KakaoSearchClient implements BlogSearchClient {
         try {
             kakaoResponse = mapper.readValue(result, KakaoResponse.class);
         } catch (JsonProcessingException e) {
-            throw new ApiResponseSchemaErrorException("Kakao", e);
+            throw new ApiResponseSchemaErrorException(NAME, e);
         }
 
         return kakaoResponse;

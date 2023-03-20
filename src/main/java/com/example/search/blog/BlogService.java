@@ -16,7 +16,7 @@ public class BlogService {
     private final BlogSearchClients clients;
 
     public Page<Blog> search(String keyword, SortType sort, int page, int size) {
-        this.keywordCountPublisher.increase(keyword);
+        keywordCountPublisher.increase(keyword);
         return clients.search(keyword, sort, page, size);
     }
 }
