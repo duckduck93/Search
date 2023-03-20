@@ -2,7 +2,6 @@ package com.example.search.blog.client;
 
 import com.example.search.blog.Blog;
 import com.example.search.blog.client.naver.NaverSearchClient;
-import com.example.search.blog.exchange.BlogSearchRequest;
 import com.example.search.blog.exchange.SortType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,9 @@ class NaverSearchClientTests {
 
     @Test
     void _01_search() {
-        Page<Blog> result = client.search(new BlogSearchRequest("naver", 1, 10, SortType.ACCURACY));
+        Page<Blog> result = client.search("naver", SortType.ACCURACY, 1, 5);
         Assertions.assertThat(result.getNumber()).isEqualTo(1);
-        Assertions.assertThat(result.getSize()).isEqualTo(10);
-        Assertions.assertThat(result.get()).hasSize(10);
+        Assertions.assertThat(result.getSize()).isEqualTo(5);
+        Assertions.assertThat(result.get()).hasSize(5);
     }
 }

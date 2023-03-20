@@ -1,12 +1,10 @@
 package com.example.search.blog;
 
-import com.example.search.blog.client.kakao.KakaoSearchClient;
-import com.example.search.blog.client.naver.NaverSearchClient;
-import com.example.search.blog.exchange.BlogSearchRequest;
-import com.example.search.errors.blogs.AllApiServerErrorException;
+import com.example.search.blog.client.BlogSearchClients;
+import com.example.search.blog.exchange.SortType;
+import com.example.search.keyword.message.KeywordCountPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -14,26 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BlogService {
-    private final RabbitTemplate rabbitTemplate;
+    private final KeywordCountPublisher keywordCountPublisher;
+    private final BlogSearchClients clients;
 
-    private final KakaoSearchClient kakaoClient;
-    private final NaverSearchClient naverClient;
-
-    public Page<Blog> search(final BlogSearchRequest request) {
-        this.rabbitTemplate.convertAndSend("search.exchange", "search.routing.#", request.getQuery());
-
-        try {
-            return kakaoClient.search(request);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-
-        try {
-            return naverClient.search(request);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-
-        throw new AllApiServerErrorException();
+    public Page<Blog> search(String keyword, SortType sort, int page, int size) {
+        this.keywordCountPublisher.increase(keyword);
+        return clients.search(keyword, sort, page, size);
     }
 }

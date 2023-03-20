@@ -1,15 +1,15 @@
-package com.example.search.keyword.consumer;
+package com.example.search.keyword.subscriber;
 
 import com.example.search.keyword.KeywordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class KeywordConsumerService {
+public class KeywordSubscriber {
     private final KeywordService service;
 
     @RabbitListener(queues = "search.queue")

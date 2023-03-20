@@ -17,7 +17,7 @@ public class BlogController {
 
     @GetMapping
     public BlogPageResponse search(final BlogSearchRequest request) {
-        Page<Blog> results = this.service.search(request);
+        Page<Blog> results = this.service.search(request.getQuery(), request.getSortType(), request.getPageNumber(), request.getPageSize());
         return BlogPageResponse.from(results);
     }
 

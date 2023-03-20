@@ -55,6 +55,21 @@ spring:
 
 ---
 spring:
+  config.activate.on-profile: test
+  jpa.show-sql: true
+  redis:
+    host: localhost
+    port: 6371
+    database: 0
+    ttl-second: 10
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+---
+spring:
   config.activate.on-profile: development
   jpa.show-sql: false
   redis:

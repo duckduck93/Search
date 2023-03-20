@@ -44,11 +44,11 @@ class BlogControllerCacheTests {
     void _01_searchCacheTest() throws Exception {
         // 캐싱 적용
         String before = "query1";
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+        given(client.search(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(createTemporaryData(before));
         searchCacheRequestAndCheckResponse(before, before);
         // 캐싱 사용
         String after = "query1-after";
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(after));
+        given(client.search(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(createTemporaryData(after));
         searchCacheRequestAndCheckResponse(before, before);
     }
 
@@ -57,13 +57,13 @@ class BlogControllerCacheTests {
     void _02_searchCacheTest() throws Exception {
         // 캐싱 적용
         String before = "query2";
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+        given(client.search(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(createTemporaryData(before));
         searchCacheRequestAndCheckResponse(before, before);
         // 캐싱 만료
         Thread.sleep(10 * 1000);
         // 캐싱 적용
         String after = "query2-after";
-        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(after));
+        given(client.search(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(createTemporaryData(after));
         searchCacheRequestAndCheckResponse(after, after);
     }
 
@@ -72,7 +72,7 @@ class BlogControllerCacheTests {
 //    void _03_searchCacheTest() throws Exception {
 //        // 캐싱 적용
 //        String before = "query3";
-//        given(client.search(ArgumentMatchers.any())).willReturn(createTemporaryData(before));
+//        given(client.search(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).willReturn(createTemporaryData(before));
 //        searchCacheRequestAndCheckResponse(before, before);
 //        searchCacheRequestAndCheckResponse(before, before);
 //
