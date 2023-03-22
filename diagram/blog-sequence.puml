@@ -1,0 +1,38 @@
+@startuml
+
+title /blogs
+header 블로그 검색 다이어그램
+footer %page% / %lastpage%
+
+actor User
+participant Blog
+participant Cache
+participant Redis #yellow
+participant Api #yellow
+participant RabbitMQ
+participant Keyword
+
+User -> Blog: /blogs?query=abc
+Blog -> RabbitMQ: publish message "abc"
+RabbitMQ -> Keyword: subcribe message "abc"
+Keyword -> Keyword: "abc" count increase
+Blog -> Cache: request
+Cache -> Api: request
+Api --> Cache: response
+Cache -> Redis: store
+Cache --> Blog: response
+Blog --> User: response
+
+newpage
+
+User -> Blog: /blogs?query=abc
+Blog -> RabbitMQ: publish message "abc"
+RabbitMQ -> Keyword: subcribe message "abc"
+Keyword -> Keyword: "abc" count increase
+Blog -> Cache: request
+Cache -> Redis: check
+Redis --> Cache: response
+Cache --> Blog: response
+Blog --> User: response
+
+@enduml

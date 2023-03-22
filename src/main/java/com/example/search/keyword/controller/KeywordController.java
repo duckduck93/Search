@@ -1,5 +1,7 @@
-package com.example.search.keyword;
+package com.example.search.keyword.controller;
 
+import com.example.search.keyword.Keyword;
+import com.example.search.keyword.KeywordService;
 import com.example.search.keyword.exchange.KeywordResponse;
 import com.example.search.keyword.exchange.KeywordSearchRequest;
 import jakarta.validation.Valid;

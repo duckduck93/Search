@@ -1,0 +1,14 @@
+@startuml
+
+
+title /keywords/popular
+header 인기 검색어 조회 다이어그램
+footer %page% / %lastpage%
+
+actor User
+participant Keyword
+
+User -> Keyword: /keywords/popular
+Keyword --> User: Response
+
+@enduml

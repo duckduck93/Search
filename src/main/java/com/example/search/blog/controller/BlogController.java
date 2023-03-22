@@ -1,5 +1,7 @@
-package com.example.search.blog;
+package com.example.search.blog.controller;
 
+import com.example.search.blog.BlogService;
+import com.example.search.blog.Blogs;
 import com.example.search.blog.exchange.BlogSearchRequest;
 import com.example.search.blog.exchange.BlogsResponse;
 import jakarta.validation.Valid;

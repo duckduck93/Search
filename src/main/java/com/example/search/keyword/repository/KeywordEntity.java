@@ -1,5 +1,6 @@
-package com.example.search.keyword;
+package com.example.search.keyword.repository;
 
+import com.example.search.keyword.Keyword;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

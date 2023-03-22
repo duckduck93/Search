@@ -1,5 +1,6 @@
 package com.example.search.keyword;
 
+import com.example.search.keyword.repository.KeywordEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,5 +1,7 @@
 package com.example.search.keyword;
 
+import com.example.search.keyword.repository.KeywordEntity;
+import com.example.search.keyword.repository.KeywordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

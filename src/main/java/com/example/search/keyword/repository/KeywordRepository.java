@@ -1,4 +1,4 @@
-package com.example.search.keyword;
+package com.example.search.keyword.repository;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
