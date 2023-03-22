@@ -1,9 +1,11 @@
 package com.example.search.blog;
 
 import com.example.search.blog.client.BlogSearchClients;
+import com.example.search.blog.client.ErrorSearchClient;
+import com.example.search.blog.client.MockSearchClient;
 import com.example.search.blog.client.error.AllApiServerErrorException;
 import com.example.search.blog.exchange.SortType;
-import com.example.search.keyword.message.KeywordCountPublisher;
+import com.example.search.keyword.message.KeywordCountService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Description;
@@ -15,7 +17,7 @@ class BlogServiceTests {
     @Test
     @Description("01. 1번 Api 장애 시 2번 Api 동작")
     void _01_search() {
-        KeywordCountPublisher publisher = createKeywordCountPublisher();
+        KeywordCountService publisher = createKeywordCountPublisher();
         BlogSearchClients clients = new BlogSearchClients(
                 List.of(
                         new ErrorSearchClient(1),
@@ -36,7 +38,7 @@ class BlogServiceTests {
     @Test
     @Description("02. 전체 Api 장애")
     void _02_search() {
-        KeywordCountPublisher publisher = createKeywordCountPublisher();
+        KeywordCountService publisher = createKeywordCountPublisher();
         BlogSearchClients clients = new BlogSearchClients(
                 List.of(
                         new ErrorSearchClient(1),
@@ -54,7 +56,7 @@ class BlogServiceTests {
     @Test
     @Description("03. Page, Size 테스트")
     void _03_search() {
-        KeywordCountPublisher publisher = createKeywordCountPublisher();
+        KeywordCountService publisher = createKeywordCountPublisher();
         BlogSearchClients clients = new BlogSearchClients(List.of(new MockSearchClient(1)));
         BlogService service = new BlogService(publisher, clients);
 
@@ -107,7 +109,7 @@ class BlogServiceTests {
     }
 
 
-    private KeywordCountPublisher createKeywordCountPublisher() {
+    private KeywordCountService createKeywordCountPublisher() {
         return keyword -> System.out.println("keyword = " + keyword);
     }
 }

@@ -1,5 +1,5 @@
 package com.example.search.keyword.message;
 
-public interface KeywordCountPublisher {
+public interface KeywordCountService {
     void increase(String keyword);
 }

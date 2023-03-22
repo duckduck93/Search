@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.4'
     id 'io.spring.dependency-management' version '1.1.0'
+    id "org.asciidoctor.jvm.convert" version "4.0.0-alpha.1"
 }
 
 group = 'com.example'
@@ -12,6 +13,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions
 }
 
 repositories {
@@ -43,9 +45,29 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // RabbitMQ
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    // Spring Rest Docs
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 tasks.named('test') {
     systemProperty "spring.profiles.active", "test"
     useJUnitPlatform()
+}
+
+ext {
+    snippetsDir = file("${buildDir}/generated-snippets")
+}
+
+asciidoctor {
+    dependsOn test
+    configurations 'asciidoctorExtensions'
+    inputs.dir snippetsDir
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }

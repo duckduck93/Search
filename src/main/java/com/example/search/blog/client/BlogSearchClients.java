@@ -46,8 +46,13 @@ public class BlogSearchClients {
                     total = response.getTotal();
                 }
                 int sub = 50 * (staPage - 1);
-                List<Blog> items = allItems.subList(sta - sub - 1, end - sub);
-                return new Blogs(items, page, size, total);
+                int staList = sta - sub - 1;
+                int endList = end - sub;
+
+                if (allItems.isEmpty() || allItems.size() < staList) {
+                    return new Blogs(new ArrayList<>(), page, size, total);
+                }
+                return new Blogs(allItems.subList(staList, Math.min(allItems.size(), endList)), page, size, total);
             } catch (ApiServerErrorException | ApiResponseSchemaErrorException e) {
                 log.error(e.getMessage(), e.getCause());
             }

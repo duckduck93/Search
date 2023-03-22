@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RabbitKeywordCountPublisher implements KeywordCountPublisher {
+public class RabbitKeywordCountService implements KeywordCountService {
     private final RabbitTemplate rabbitTemplate;
 
     @Override

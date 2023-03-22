@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Primary
 @RequiredArgsConstructor
 
-public class DefaultKeywordCountPublisher implements KeywordCountPublisher {
+public class DefaultKeywordCountService implements KeywordCountService {
     private final KeywordService service;
 
     @Override

@@ -1,0 +1,44 @@
+= Spring REST Docs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[resources]]
+== Blogs
+
+[[resources-blogs-search]]
+=== 블로그 데이터 조회
+
+==== HTTP
+
+include::{snippets}/blogs-search/http-request.adoc[]
+include::{snippets}/blogs-search/http-response.adoc[]
+
+==== Response
+
+include::{snippets}/blogs-search/response-body.adoc[]
+====== Api 사용 불가 시
+
+include::{snippets}/blogs-search-error/response-body.adoc[]
+
+==== Curl
+
+include::{snippets}/blogs-search/curl-request.adoc[]
+
+== Keywords
+
+[[resources-keywords-popular]]
+=== 인기 검색어 조회
+
+==== HTTP
+
+include::{snippets}/keywords-popular/http-request.adoc[]
+include::{snippets}/keywords-popular/http-response.adoc[]
+
+==== Response
+
+include::{snippets}/keywords-popular/response-body.adoc[]
+
+==== Curl
+
+include::{snippets}/keywords-popular/curl-request.adoc[]

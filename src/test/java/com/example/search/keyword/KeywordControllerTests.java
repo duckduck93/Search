@@ -5,6 +5,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -15,11 +16,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @DisplayName("Keyword Controller Api 테스트")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class KeywordControllerTests {
@@ -30,12 +33,12 @@ class KeywordControllerTests {
     @DisplayName("01. Blog Api 조회하여 Keyword 쌓기")
     void _01_keywordCreateTest() throws Exception {
         String[] keywords = {
-                "카카오", "카카오게임즈", "카카오모빌리티", "카카오페이", "카카오엔터프라이즈",
-                "카카오i", "카카오M", "카카오벤처스", "카카오X", "카카오뱅크",
+                "kakao", "kakao-games", "kakao-mobility", "kakao-pay", "kakao-enterprise",
+                "kakao-i", "kakao-M", "kakao-ventures", "kakao-X", "kakao-bank",
                 "하하하",
 
-                "카카오뱅크", "카카오뱅크", "카카오뱅크", "카카오뱅크",
-                "카카오", "카카오", "카카오",
+                "kakao-bank", "kakao-bank", "kakao-bank", "kakao-bank",
+                "kakao", "kakao", "kakao",
         };
         for (String keyword : keywords) {
             ResultActions result = mockMvc.perform(
@@ -61,21 +64,22 @@ class KeywordControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
         );
         result.andDo(MockMvcResultHandlers.print())
+                .andDo(document("keywords-popular"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(10)))
-                .andExpect(jsonPath("$[0].name", is("카카오뱅크")))
+                .andExpect(jsonPath("$[0].name", is("kakao-bank")))
                 .andExpect(jsonPath("$[0].count", is(5)))
-                .andExpect(jsonPath("$[1].name", is("카카오")))
+                .andExpect(jsonPath("$[1].name", is("kakao")))
                 .andExpect(jsonPath("$[1].count", is(4)))
-                .andExpect(jsonPath("$[2].name", is("카카오i")))
+                .andExpect(jsonPath("$[2].name", is("kakao-enterprise")))
                 .andExpect(jsonPath("$[2].count", is(1)))
-                .andExpect(jsonPath("$[3].name", is("카카오M")))
-                .andExpect(jsonPath("$[4].name", is("카카오X")))
-                .andExpect(jsonPath("$[5].name", is("카카오게임즈")))
-                .andExpect(jsonPath("$[6].name", is("카카오모빌리티")))
-                .andExpect(jsonPath("$[7].name", is("카카오벤처스")))
-                .andExpect(jsonPath("$[8].name", is("카카오엔터프라이즈")))
-                .andExpect(jsonPath("$[9].name", is("카카오페이")));
+                .andExpect(jsonPath("$[3].name", is("kakao-games")))
+                .andExpect(jsonPath("$[4].name", is("kakao-i")))
+                .andExpect(jsonPath("$[5].name", is("kakao-M")))
+                .andExpect(jsonPath("$[6].name", is("kakao-mobility")))
+                .andExpect(jsonPath("$[7].name", is("kakao-pay")))
+                .andExpect(jsonPath("$[8].name", is("kakao-ventures")))
+                .andExpect(jsonPath("$[9].name", is("kakao-X")));
     }
 
 
@@ -91,11 +95,11 @@ class KeywordControllerTests {
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].name", is("카카오뱅크")))
+                .andExpect(jsonPath("$[0].name", is("kakao-bank")))
                 .andExpect(jsonPath("$[0].count", is(5)))
-                .andExpect(jsonPath("$[1].name", is("카카오")))
+                .andExpect(jsonPath("$[1].name", is("kakao")))
                 .andExpect(jsonPath("$[1].count", is(4)))
-                .andExpect(jsonPath("$[2].name", is("카카오i")))
+                .andExpect(jsonPath("$[2].name", is("kakao-enterprise")))
                 .andExpect(jsonPath("$[2].count", is(1)));
     }
 

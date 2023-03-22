@@ -5,6 +5,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs
 @DisplayName("Blog Controller Api 테스트")
 @TestMethodOrder(MethodOrderer.MethodName.class)
 class BlogControllerTests {
@@ -34,7 +36,7 @@ class BlogControllerTests {
                 MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "blog1")
+                        .queryParam("query", "naver-line")
                         .queryParam("page", "3")
                         .queryParam("size", "40")
                         .queryParam("sort", "RECENCY")
@@ -54,7 +56,7 @@ class BlogControllerTests {
                 MockMvcRequestBuilders.get("/blogs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .queryParam("query", "blog2")
+                        .queryParam("query", "naver-financial")
         );
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
@@ -78,5 +80,25 @@ class BlogControllerTests {
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.message", is("ACCURACY, RECENCY 로 입력해주세요, page: 1 이상이여야 합니다, query: 검색어를 입력해주세요, size: 50 이하여야 합니다")));
+    }
+
+    @Test
+    @DisplayName("04. Api 조회 (데이터 없는 케이스)")
+    void _04_searchTest() throws Exception {
+        ResultActions result = mockMvc.perform(
+                MockMvcRequestBuilders.get("/blogs")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .queryParam("query", "먀ㅑㅠㅛㅗㅕindjgn야허ㅑdcvmkㅇ")
+                        .queryParam("page", "3")
+                        .queryParam("size", "40")
+                        .queryParam("sort", "RECENCY")
+        );
+        result.andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page", is(3)))
+                .andExpect(jsonPath("$.size", is(40)))
+                .andExpect(jsonPath("$.total").exists())
+                .andExpect(jsonPath("$.items", hasSize(0)));
     }
 }
