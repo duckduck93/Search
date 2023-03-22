@@ -1,5 +1,6 @@
 package com.example.search.blog.exchange;
 
+import com.example.search.core.validator.ValidEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +13,8 @@ public class BlogSearchRequest {
     @NotBlank(message = "query: 검색어를 입력해주세요")
     private final String query;
 
-    private final SortType sortType;
+    @ValidEnum(enumClass = SortType.class)
+    private final String sort;
 
     @Min(value = 1, message = "page: 1 이상이여야 합니다")
     @Max(value = 50, message = "page: 50 이하여야 합니다")
@@ -26,8 +28,9 @@ public class BlogSearchRequest {
         return query;
     }
 
-    public SortType getSortType() {
-        return Optional.ofNullable(sortType).orElse(SortType.ACCURACY);
+    public SortType getSort() {
+        String result = Optional.ofNullable(sort).orElse(SortType.ACCURACY.name());
+        return SortType.valueOf(result);
     }
 
     public int getPage() {

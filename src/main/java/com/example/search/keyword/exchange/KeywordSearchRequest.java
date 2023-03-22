@@ -1,4 +1,4 @@
-package com.example.search.keyword;
+package com.example.search.keyword.exchange;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

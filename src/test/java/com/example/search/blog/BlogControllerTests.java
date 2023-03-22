@@ -35,16 +35,16 @@ class BlogControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .queryParam("query", "blog1")
-                        .queryParam("page", "2")
-                        .queryParam("size", "5")
-                        .queryParam("sort", "ACCURACY")
+                        .queryParam("page", "3")
+                        .queryParam("size", "40")
+                        .queryParam("sort", "RECENCY")
         );
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.page", is(2)))
-                .andExpect(jsonPath("$.size", is(5)))
+                .andExpect(jsonPath("$.page", is(3)))
+                .andExpect(jsonPath("$.size", is(40)))
                 .andExpect(jsonPath("$.total").exists())
-                .andExpect(jsonPath("$.items", hasSize(5)));
+                .andExpect(jsonPath("$.items", hasSize(40)));
     }
 
     @Test
@@ -77,6 +77,6 @@ class BlogControllerTests {
         );
         result.andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.message", is("page: 1 이상이여야 합니다, query: 검색어를 입력해주세요, size: 50 이하여야 합니다, sort: ACCURACY, ")));
+                .andExpect(jsonPath("$.message", is("ACCURACY, RECENCY 로 입력해주세요, page: 1 이상이여야 합니다, query: 검색어를 입력해주세요, size: 50 이하여야 합니다")));
     }
 }

@@ -1,5 +1,6 @@
-package com.example.search.keyword;
+package com.example.search.keyword.exchange;
 
+import com.example.search.keyword.Keyword;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

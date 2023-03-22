@@ -2,6 +2,7 @@ package com.example.search.blog.client.kakao;
 
 import com.example.search.blog.Blog;
 import com.example.search.blog.client.BlogSearchClient;
+import com.example.search.blog.client.BlogSearchResult;
 import com.example.search.blog.client.error.ApiRequestSchemaErrorException;
 import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
 import com.example.search.blog.client.error.ApiServerErrorException;
@@ -15,10 +16,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -63,11 +62,24 @@ public class KakaoSearchClient implements BlogSearchClient {
     }
 
     @Override
-    public Page<Blog> search(String keyword, SortType sort, int page, int size) {
-        KakaoResponse response = requestToKakao(keyword, sort, page, size);
+    public String getClientName() {
+        return NAME;
+    }
+
+    @Override
+    public boolean checkHealth() throws ApiServerErrorException {
+        // Todo Health Check Api
+        return true;
+    }
+
+    @Override
+    @Cacheable(cacheManager = "RedisCacheManager", value = "blogs.kakao", key = "#keyword + '|' + #sort + '|' + #page")
+    public BlogSearchResult search(String keyword, SortType sort, int page) {
+        KakaoResponse response = requestToKakao(keyword, sort, page, 50);
         List<Blog> items = response.getDocuments().stream().map(KakaoDocument::toBlog).toList();
         long total = response.getMeta().getTotalCount();
-        return new PageImpl<>(items, PageRequest.of(page, size), total);
+
+        return new BlogSearchResult(items, total);
     }
 
     private KakaoResponse requestToKakao(String keyword, SortType sort, int page, int size) {
@@ -90,7 +102,7 @@ public class KakaoSearchClient implements BlogSearchClient {
         } catch (HttpServerErrorException e) {
             throw new ApiServerErrorException(NAME);
         } catch (HttpClientErrorException e) {
-            throw new ApiRequestSchemaErrorException(NAME);
+            throw new ApiRequestSchemaErrorException(NAME, e);
         }
         String result = response.getBody();
 

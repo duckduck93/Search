@@ -1,5 +1,7 @@
 package com.example.search.keyword;
 
+import com.example.search.keyword.exchange.KeywordResponse;
+import com.example.search.keyword.exchange.KeywordSearchRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

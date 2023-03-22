@@ -1,6 +1,6 @@
 package com.example.search.blog.client.naver;
 
-import com.example.search.blog.Blog;
+import com.example.search.blog.client.BlogSearchResult;
 import com.example.search.blog.client.error.ApiRequestSchemaErrorException;
 import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
 import com.example.search.blog.client.error.ApiServerErrorException;
@@ -8,7 +8,6 @@ import com.example.search.blog.exchange.SortType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
 
 class NaverSearchClientTests {
     @Test
@@ -19,10 +18,9 @@ class NaverSearchClientTests {
                 "x",
                 "x"
         );
-        Page<Blog> result = client.search("naver", SortType.ACCURACY, 1, 5);
-        Assertions.assertThat(result.getNumber()).isEqualTo(1);
-        Assertions.assertThat(result.getSize()).isEqualTo(5);
-        Assertions.assertThat(result.get()).hasSize(5);
+        BlogSearchResult response = client.search("naver", SortType.ACCURACY, 1);
+        Assertions.assertThat(response.getItems()).isNotNull();
+        Assertions.assertThat(response.getTotal()).isNotNull();
     }
 
     @Test
@@ -30,7 +28,7 @@ class NaverSearchClientTests {
     void _02_search() {
         NaverSearchClient client = new NaverSearchClient("https://mock.codes/400", "", "");
         Assertions
-                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1, 5))
+                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1))
                 .isInstanceOf(ApiRequestSchemaErrorException.class);
     }
 
@@ -39,7 +37,7 @@ class NaverSearchClientTests {
     void _03_search() {
         NaverSearchClient client = new NaverSearchClient("https://mock.codes/500", "", "");
         Assertions
-                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1, 5))
+                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1))
                 .isInstanceOf(ApiServerErrorException.class);
     }
 
@@ -48,7 +46,7 @@ class NaverSearchClientTests {
     void _04_search() {
         NaverSearchClient client = new NaverSearchClient("https://mock.codes/200", "", "");
         Assertions
-                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1, 5))
+                .assertThatThrownBy(() -> client.search("", SortType.ACCURACY, 1))
                 .isInstanceOf(ApiResponseSchemaErrorException.class);
     }
 }

@@ -2,6 +2,7 @@ package com.example.search.blog.client.naver;
 
 import com.example.search.blog.Blog;
 import com.example.search.blog.client.BlogSearchClient;
+import com.example.search.blog.client.BlogSearchResult;
 import com.example.search.blog.client.error.ApiRequestSchemaErrorException;
 import com.example.search.blog.client.error.ApiResponseSchemaErrorException;
 import com.example.search.blog.client.error.ApiServerErrorException;
@@ -15,10 +16,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.annotation.Order;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -64,11 +63,26 @@ public class NaverSearchClient implements BlogSearchClient {
     }
 
     @Override
-    public Page<Blog> search(String keyword, SortType sort, int page, int size) {
-        NaverResponse response = requestToNaver(keyword, sort, page, size);
-        List<Blog> items = response.getItems().stream().map(NaverItem::toBlog).toList();
+    public String getClientName() {
+        return NAME;
+    }
+
+    @Override
+    public boolean checkHealth() throws ApiServerErrorException {
+        // Todo Health Check Api
+        return true;
+    }
+
+    @Override
+    @Cacheable(cacheManager = "RedisCacheManager", value = "blogs.naver", key = "#keyword + '|' + #sort + '|' + #page")
+    public BlogSearchResult search(String keyword, SortType sort, int page) {
+        NaverResponse response = requestToNaver(keyword, sort, page, 50);
         long total = response.getTotal();
-        return new PageImpl<>(items, PageRequest.of(page, size), total);
+
+        List<Blog> items = new java.util.ArrayList<>((int) total);
+        items.addAll(response.getItems().stream().map(NaverItem::toBlog).toList());
+
+        return new BlogSearchResult(items, total);
     }
 
     private NaverResponse requestToNaver(String keyword, SortType sort, int page, int size) {
@@ -92,7 +106,7 @@ public class NaverSearchClient implements BlogSearchClient {
         } catch (HttpServerErrorException e) {
             throw new ApiServerErrorException(NAME);
         } catch (HttpClientErrorException e) {
-            throw new ApiRequestSchemaErrorException(NAME);
+            throw new ApiRequestSchemaErrorException(NAME, e);
         }
         String result = response.getBody();
 
