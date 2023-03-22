@@ -37,7 +37,7 @@ public class BlogSearchClients {
                 int sta = end - size + 1;
 
                 int staPage = (sta / 50) + 1;
-                int endPage = (end / 50) + 1;
+                int endPage = (end / 50) + (end % 50 != 0 ? 1 : 0);
                 List<Blog> allItems = new ArrayList<>(100);
                 long total = 0;
                 for (int requestPage = staPage; requestPage <= endPage; requestPage++) {

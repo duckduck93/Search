@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @Component
 @Order(1) // BlogSearchClient 중 첫번째 구현체
 public class KakaoSearchClient implements BlogSearchClient {
@@ -73,8 +75,9 @@ public class KakaoSearchClient implements BlogSearchClient {
     }
 
     @Override
-    @Cacheable(cacheManager = "RedisCacheManager", value = "blogs.kakao", key = "#keyword + '|' + #sort + '|' + #page")
+    @Cacheable(value = "blogs.kakao", key = "#keyword + '|' + #sort + '|' + #page")
     public BlogSearchResult search(String keyword, SortType sort, int page) {
+        log.info("KakaoSearchClient %s %s %d".formatted(keyword, sort, page));
         KakaoResponse response = requestToKakao(keyword, sort, page, 50);
         List<Blog> items = response.getDocuments().stream().map(KakaoDocument::toBlog).toList();
         long total = response.getMeta().getTotalCount();

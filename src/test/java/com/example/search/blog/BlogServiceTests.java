@@ -104,6 +104,13 @@ class BlogServiceTests {
         Assertions.assertThat(resultItems5).hasSize(40);
         Assertions.assertThat(resultItems5.get(0).getContents()).isEqualTo("121 keyword");
         Assertions.assertThat(resultItems5.get(39).getContents()).isEqualTo("160 keyword");
+
+        Blogs result6 = service.search("keyword", SortType.ACCURACY, 10, 10);
+        Assertions.assertThat(result3.getTotal()).isEqualTo(200);
+        List<Blog> resultItems6 = result6.getItems();
+        Assertions.assertThat(resultItems6).hasSize(10);
+        Assertions.assertThat(resultItems6.get(0).getContents()).isEqualTo("91 keyword");
+        Assertions.assertThat(resultItems6.get(9).getContents()).isEqualTo("100 keyword");
     }
 
     private BlogSearchResult createMockResult(int order, String keyword, int page) {

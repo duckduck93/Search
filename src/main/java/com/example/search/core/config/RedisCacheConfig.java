@@ -23,7 +23,7 @@ import java.time.Duration;
 @EnableCaching
 public class RedisCacheConfig {
 
-    @Bean(name = "RedisCacheManager")
+    @Bean
     public CacheManager redisCacheManager(RedisConnectionFactory factory, @Value("${spring.redis.ttl-second}") String ttl) {
         RedisSerializationContext.SerializationPair<String> keySerializer = RedisSerializationContext.SerializationPair
                 .fromSerializer(new StringRedisSerializer());

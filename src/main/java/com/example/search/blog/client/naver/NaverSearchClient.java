@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Slf4j
 @Component
 @Order(2) // BlogSearchClient 중 두번째 구현체
 public class NaverSearchClient implements BlogSearchClient {
@@ -74,8 +76,9 @@ public class NaverSearchClient implements BlogSearchClient {
     }
 
     @Override
-    @Cacheable(cacheManager = "RedisCacheManager", value = "blogs.naver", key = "#keyword + '|' + #sort + '|' + #page")
+    @Cacheable(value = "blogs.naver", key = "#keyword + '|' + #sort + '|' + #page")
     public BlogSearchResult search(String keyword, SortType sort, int page) {
+        log.info("KakaoSearchClient %s %s %d".formatted(keyword, sort, page));
         NaverResponse response = requestToNaver(keyword, sort, page, 50);
         long total = response.getTotal();
 
