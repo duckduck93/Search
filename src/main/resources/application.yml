@@ -46,7 +46,7 @@ spring:
     host: localhost
     port: 6371
     database: 0
-    ttl-second: 120
+    ttl-second: 600
   rabbitmq:
     host: localhost
     port: 5672
@@ -76,7 +76,7 @@ spring:
     host: search-cache
     port: 6371
     database: 0
-    ttl-second: 120
+    ttl-second: 600
   rabbitmq:
     host: search-queue
     port: 5672
