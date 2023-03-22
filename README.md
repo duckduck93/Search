@@ -5,6 +5,11 @@
 - Kakao Api, Naver Api 를 통한 블로그 데이터 조회
 - 인기 검색어 목록 제공
 
+## 빌드 결과물
+
+Repository : https://github.com/duckduck93/Search  
+Executable JAR : https://github.com/duckduck93/Search/releases/download/0.0.1/search-0.0.1-SNAPSHOT.jar
+
 ## 기술기반
 
 - Java 17
@@ -64,4 +69,71 @@ Api 명세 기능 활용
 // Spring Rest Docs
 testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+```
+
+### Api 명세
+
+### Blogs (블로그 데이터 조회)
+
+#### Http Request
+
+```bash
+$ curl 'http://localhost:8080/blogs?query=naver-line&page=1&size=10&sort=ACCURACY' -i -X GET \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json'
+```
+
+#### Http Response
+
+- success
+
+```json
+{
+  "total": 10,
+  "size": 10,
+  "page": 1,
+  "items": [
+    {
+      "title": "title",
+      "contents": "Content 1",
+      "url": "https://naver.com",
+      "blogName": "블로그명",
+      "thumbnail": "https://naver.com",
+      "createAt": "2023-03-22T22:09:44.101666"
+    }
+  ]
+}
+```
+
+- error
+
+```json
+{
+  "statusCode": "INTERNAL_SERVER_ERROR",
+  "message": "500 모든 Api 서버가 오류 상태입니다.",
+  "time": "2023-03-22T22:09:44.344713"
+}
+```
+
+### Keywords (인기 검색어 조회)
+
+#### Http Request
+
+```bash
+$ curl 'http://localhost:8080/keywords/popular' -i -X GET \
+    -H 'Content-Type: application/json;charset=UTF-8' \
+    -H 'Accept: application/json'
+```
+
+#### Http Response
+
+- success
+
+```json
+[
+  {
+    "name": "검색어",
+    "count": 99
+  }
+]
 ```

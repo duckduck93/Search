@@ -17,7 +17,7 @@ include::{snippets}/blogs-search/http-response.adoc[]
 ==== Response
 
 include::{snippets}/blogs-search/response-body.adoc[]
-====== Api 사용 불가 시
+====== Error
 
 include::{snippets}/blogs-search-error/response-body.adoc[]
 
